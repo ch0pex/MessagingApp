@@ -1,7 +1,12 @@
+/* **************************************************************************** */
+/*  Este fichero contiene todas las funciones necesarias para el manejo de      */
+/*  los argumentos pasados al ejecutable                                        */                                              
+/* **************************************************************************** */
+
 #include "parser.h"
 
 /**********************************************************
- * Function: Comprueba que los parametros pasados al 
+ * Function: Comprueba que los argumentos pasados al 
  * ejecutable sean validos
  *********************************************************/
 t_error_code parser_arg_check(int argc, char **argv)

@@ -1,5 +1,8 @@
-#include "main.h"
+/* ***************************************************************************** */
+/* Este fichero contiene la funcion main del programa donde se lanza el servidor */
+/* ***************************************************************************** */
 
+#include "main.h"
 
 /**********************************************************
  * Function: Funcion main, lanza el servidor
