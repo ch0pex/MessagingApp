@@ -13,7 +13,7 @@
 #define ACCEPT_ERROR_MSG "Error en accept\n"
 #define EXT_NO_ARG_MSG "Error, es necesario pasar el puerto como argumento para lanzar el servidor\n"
 #define EXT_TO_MANY_ARG_MSG "Error, demasiados argumentos, solo indique el puerto\n"
-#define EXT_BAD_PORT_MSG  "Error, puerto no valido (1024-49151)\n"
+#define EXT_BAD_PORT_MSG  "Error, puerto no valido (1024-65535)\n"
 
 //Tipos de errores
 

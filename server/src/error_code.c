@@ -1,14 +1,5 @@
 #include "error_code.h"
 
-/**
- * @brief Escribe el error por pantalla
- *
- * @param err Codigo de error
- * @return El propio error
- *
- * Esta función suma los dos números enteros proporcionados como entrada y devuelve el resultado.
- */
-
 t_error_code error_code_print_msg(t_error_code err)
 {
 	switch(err)
