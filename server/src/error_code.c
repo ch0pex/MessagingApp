@@ -1,5 +1,9 @@
 #include "error_code.h"
 
+/**********************************************************
+ * Function: Esta funcion escribe por pantalla el error 
+ * recibido
+ *********************************************************/
 t_error_code error_code_print_msg(t_error_code err)
 {
 	switch(err)
