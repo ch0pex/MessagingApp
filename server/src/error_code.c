@@ -12,10 +12,8 @@ t_error_code error_code_print_msg(t_error_code err)
 {
 	switch(err)
 	{
-	case ERROR: 		
-		printf(INTERNAL_ERROR_MSG); break; 
-	case SUCCESS: 	 	
-		break; 
+	case ERROR: 			printf(INTERNAL_ERROR_MSG); break; 
+	case SUCCESS: break; 
 	case SOCKET_ERROR: 		printf(SOCKET_ERROR_MSG); break; 
 	case BIND_ERROR: 		printf(BIND_ERROR_MSG);   break; 
 	case LISTEN_ERROR: 		printf(LISTEN_ERROR_MSG); break; 
