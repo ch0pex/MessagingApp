@@ -133,6 +133,7 @@ void server_treat_request(void *sc)
 	else if(CONNECTED_USERS == request.op)
 		err = server_request_connected_users(sc_copy, &request, &response);
 	
+	
 
 	/*
 	switch(request.op) {
