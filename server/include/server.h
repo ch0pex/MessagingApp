@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include <signal.h>
 
 #include "error_code.h"
 #include "server_request.h"
@@ -26,13 +27,11 @@ typedef struct {
 
 } t_server; 
 
+t_error_code server_init(t_server *server, char *port); 
 t_error_code server_socket_create(t_server *server);
 t_error_code server_socket_config(t_server *server, int port); 
 void server_thread_config(t_server *server); 
-t_error_code server_create(t_server *server);
-t_error_code server_init(t_server *server, char *port); 
-t_error_code server_loop(t_server *server); 
-t_error_code server_destroy(t_server *server); 
+void server_loop(t_server *server); 
 void server_treat_request(void *sc);
 
 #endif 

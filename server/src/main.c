@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 		err = server_init(&server, argv[1]); //Inicializacion del servidor
 		if (err == SUCCESS)
 		{
-			err = server_loop(&server); // Bucle del servidor
+			server_loop(&server); // Bucle del servidor
 		}
 	}
 	

@@ -8,6 +8,13 @@
 #include "request_response.h"
 #include <stdbool.h>
 
+#define request_status_msg(op) do { \
+	if(response->status == OK) \
+		printf("%s %s OK\n", op, request->user.user_name); \
+	else \
+		printf("%s %s FAIL\n", op, request->user.user_name); \
+} while(0) 
+
 t_error_code server_request_register(int sc_copy, t_request *request, t_response *response); 
 t_error_code server_request_unregister(int sc_copy, t_request *request, t_response *response); 
 t_error_code server_request_connect(int sc_copy, t_request *request, t_response *response); 
