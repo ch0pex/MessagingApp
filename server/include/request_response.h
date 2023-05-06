@@ -1,6 +1,8 @@
 #ifndef REQUEST_RESPONSE_H
 #define REQUEST_RESPONSE_H
 
+#include <stdbool.h>
+
 typedef enum{
 	OK = 0,
 	FAIL, 
@@ -17,11 +19,24 @@ typedef enum{
 } t_request_code; 
 
 typedef struct {
-	int op; 
+	int op;
+	t_user_data user; 
 } t_request;
 
 typedef struct{
 	t_response_status status;
+	t_user_data user; 
 } t_response; 
+
+typedef struct{
+	char *full_name; 
+	char *user_name; 
+	char *date;
+	bool state; 
+	char *IP; 
+	int port; 
+	char **messages; 
+} t_user_data; 
+
 
 #endif 

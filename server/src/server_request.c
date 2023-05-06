@@ -12,6 +12,8 @@ t_error_code server_request_register(int sc_copy, t_request *request, t_response
 		return(RECEIVE_ERROR)
 	*/
 
+	
+
 	response->status = db_register(/*User info*/);
 	return (SUCCESS);
 } 

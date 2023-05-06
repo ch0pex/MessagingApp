@@ -26,6 +26,9 @@ t_error_code server_init(t_server *server, char* port)
 	if (err != SUCCESS)
 		return (err); 
 
+	
+	printf("init server %s:%d", inet_ntoa(server->server_addr.sin_addr), ntohs(server->server_addr.sin_port));
+
 	server_thread_config(server); 
 	return (SUCCESS); 
 }
@@ -52,6 +55,7 @@ t_error_code server_socket_config(t_server *server, int port)
 	server->server_addr.sin_family      = AF_INET;
 	server->server_addr.sin_addr.s_addr = INADDR_ANY;
 	server->server_addr.sin_port        = htons(port);
+
 
 	err = bind(server->sd, (const struct sockaddr *)&server->server_addr, sizeof(server->server_addr));
 	if (err != SUCCESS)
