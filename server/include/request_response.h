@@ -3,12 +3,23 @@
 
 #include <stdbool.h>
 
+#define MAX_SIZE 256
+ #define REGISTER   "REGISTER"
+ #define UNREGISTER "UNREGISTER"
+ #define CONNECT "CONNECT"
+ #define DISCONNECT "DISCONNECT"
+ #define SEND_MESSAGE "SEND_MESSAGE"
+ #define CONNECTED_USERS "CONNECTEDUSERS"
+ 
+
+
 typedef enum{
 	OK = 0,
-	FAIL, 
-	USER_ERROR
+	USER_ERROR,
+	FAIL
 } t_response_status; 
 
+/*
 typedef enum{
 	REGISTER = 0,
 	UNREGISTER, 
@@ -17,19 +28,18 @@ typedef enum{
 	SEND_MESSAGE,
 	CONNECTED_USERS
 } t_request_code; 
-
+*/
 typedef struct{
-	char *full_name; 
-	char *user_name; 
-	char *date;
+	char full_name[MAX_SIZE]; 
+	char user_name[MAX_SIZE]; 
+	char date[MAX_SIZE];
 	bool state; 
-	char *IP; 
+	char IP[MAX_SIZE]; 
 	int port; 
-	char **messages; 
 } t_user_data; 
 
 typedef struct {
-	int op;
+	char op[MAX_SIZE]; 
 	t_user_data user; 
 } t_request;
 

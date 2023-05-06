@@ -2,7 +2,7 @@
 #include <errno.h>
 #include "lines.h"
 
-int sendMessage(int socket, char * buffer, int len)
+t_error_code sendMessage(int socket, char * buffer, int len)
 {
 	int r;
 	int l = len;
@@ -20,7 +20,7 @@ int sendMessage(int socket, char * buffer, int len)
 		return(SUCCESS);	/* full length has been sent */
 }
 
-int recvMessage(int socket, char *buffer, int len)
+t_error_code recvMessage(int socket, char *buffer, int len)
 {
 	int r;
 	int l = len;

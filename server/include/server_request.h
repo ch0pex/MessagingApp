@@ -6,6 +6,7 @@
 #include "error_code.h"
 #include "db.h"
 #include "request_response.h"
+#include <stdbool.h>
 
 t_error_code server_request_register(int sc_copy, t_request *request, t_response *response); 
 t_error_code server_request_unregister(int sc_copy, t_request *request, t_response *response); 

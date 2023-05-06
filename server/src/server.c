@@ -26,8 +26,8 @@ t_error_code server_init(t_server *server, char* port)
 	if (err != SUCCESS)
 		return (err); 
 
-	
-	printf("init server %s:%d", inet_ntoa(server->server_addr.sin_addr), ntohs(server->server_addr.sin_port));
+	printf("init server %s:%d\n", inet_ntoa(server->server_addr.sin_addr), ntohs(server->server_addr.sin_port));
+	fflush(stdout); 
 
 	server_thread_config(server); 
 	return (SUCCESS); 
@@ -118,8 +118,23 @@ void server_treat_request(void *sc)
 	pthread_cond_signal(&cond_sc);
 	pthread_mutex_unlock(&mutex_sc);
 	
-	err = recvMessage(sc_copy, (char *) &request.op, sizeof(char));
+	err = readLine(sc_copy, (char *) &request.op, MAX_SIZE);
 
+	if(REGISTER == request.op)
+		err = server_request_register(sc_copy, &request, &response);
+	else if(UNREGISTER == request.op)
+		err = server_request_unregister(sc_copy, &request, &response);
+	else if(CONNECT == request.op)
+		err = server_request_connect(sc_copy, &request, &response);
+	else if(DISCONNECT == request.op)
+		err = server_request_disconnect(sc_copy, &request, &response);
+	else if(SEND_MESSAGE == request.op)
+		err = server_request_send_message(sc_copy, &request, &response);
+	else if(CONNECTED_USERS == request.op)
+		err = server_request_connected_users(sc_copy, &request, &response);
+	
+
+	/*
 	switch(request.op) {
     case REGISTER:			err = server_request_register(sc_copy, &request, &response); break;
     case UNREGISTER:		err = server_request_unregister(sc_copy, &request, &response); break;
@@ -128,6 +143,7 @@ void server_treat_request(void *sc)
     case SEND_MESSAGE:		err = server_request_send_message(sc_copy, &request, &response);break;
     case CONNECTED_USERS:	err = server_request_connected_users(sc_copy, &request, &response); break;
 	}
+	*/
 
 	if (err != SUCCESS)
 	{
