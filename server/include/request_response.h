@@ -18,6 +18,16 @@ typedef enum{
 	CONNECTED_USERS
 } t_request_code; 
 
+typedef struct{
+	char *full_name; 
+	char *user_name; 
+	char *date;
+	bool state; 
+	char *IP; 
+	int port; 
+	char **messages; 
+} t_user_data; 
+
 typedef struct {
 	int op;
 	t_user_data user; 
@@ -28,15 +38,6 @@ typedef struct{
 	t_user_data user; 
 } t_response; 
 
-typedef struct{
-	char *full_name; 
-	char *user_name; 
-	char *date;
-	bool state; 
-	char *IP; 
-	int port; 
-	char **messages; 
-} t_user_data; 
 
 
 #endif 
