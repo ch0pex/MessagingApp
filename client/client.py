@@ -9,10 +9,12 @@ class client :
     # ******************** TYPES *********************
     # *
     # * @brief Return codes for the protocol methods
-    class RC(Enum) :
+    class RC(Enum) :  
+        # Esto por algun motivo estaba cambiado a como sale en el enunuciado USER_ERROR valia = 2 y ERROR valia = 1
+        # PERO en el enunciado pone que sea al reves, asi que lo he cambiado
         OK = 0
-        ERROR = 1
-        USER_ERROR = 2
+        USER_ERROR = 1
+        ERROR = 2
 
     # ****************** ATTRIBUTES ******************
     _server = None
