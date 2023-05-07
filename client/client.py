@@ -3,6 +3,7 @@ import sys
 import PySimpleGUI as sg
 from enum import Enum
 import argparse
+import socket
 
 class client :
 
@@ -23,17 +24,85 @@ class client :
     _date = None
 
     # ******************** METHODS *******************
+    # Funcion que decodifica la salida del socket
+    def readNumber(sock):
+        a = ''
+        while True:
+            msg = sock.recv(1)
+            if (msg == b'\0'):
+                break;
+            a += msg.decode()
+
+        return(int(a,10))
+    
+    # Limpia los campos de registro en caso de que alguno no sea válido
+    def clearRegisterData():
+        client._username = None
+        client._alias = None
+        client._date= None
+
     # *
     # * @param user - User name to register in the system
     # *
     # * @return OK if successful
     # * @return USER_ERROR if the user is already registered
     # * @return ERROR if another error occurred
+    
     @staticmethod
     def  register(user, window):
-        window['_SERVER_'].print("s> REGISTER OK")
-        #  Write your code here
-        return client.RC.ERROR
+        # Creamos el socket
+        sock =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # --INICIO CONEXION--
+        try:
+            sock.connect(client._server)
+        except Exception as e:
+            print("Error de conexión con el servidor: ", e)
+
+        # Ponemos los datos a enviar en el formato correcto (añadiendo caracter de fin de linea) + usando encode()
+        # Se enviarán el código de operación, nombre de usuario, alias y fecha de nacimiento
+        cop = b'REGISTER \0'
+        usn = str(client._username + '\0').encode()
+        usa = str(user + '\0').encode()
+        usbd = str(client._date + '\0').encode()
+
+        # Se procede a enviar los datos individualmente por el socket
+        try:
+            sock.sendall(cop)
+            sock.sendall(usn)
+            sock.sendall(usa)
+            sock.sendall(usbd)
+        except Exception as e:
+            print("Error al enviar datos en el socket: ", e)
+
+        # Ahora recibimos la respuesta del servidor usando la función vista en los ejemplos, que permite
+        # leer números directamente del socket
+        try:
+            res = client.readNumber(sock)
+        except Exception as e:
+            print("Error al leer datos del socket: ", e)
+
+        # Dependiendo de la respuesta dada, el valor de retorno será distinto
+        #CASO 0: EXITO
+        if res == 0:
+            window['_SERVER_'].print("s> REGISTER OK")
+            sock.close()
+            return client.RC.OK
+        #CASO 1: REGISTRADO PREVIAMENTE
+        if res == 1:
+            window['_SERVER_'].print("s> USERNAME IN USE")
+            client.clearRegisterData()
+            sock.close()
+            return client.RC.USER_ERROR
+        #OTROS CASOS (INCLUYE TANTO RES = 2 COMO OTROS VALORES INESPERADOS)
+        else:
+            window['_SERVER_'].print("s> REGISTER FAIL")
+            client.clearRegisterData()
+            sock.close()
+            return client.RC.ERROR
+
+        # --FIN CONEXION--
+
+
 
     # *
     # 	 * @param user - User name to unregister from the system
@@ -43,9 +112,49 @@ class client :
     # 	 * @return ERROR if another error occurred
     @staticmethod
     def  unregister(user, window):
-        window['_SERVER_'].print("s> UNREGISTER OK")
-        #  Write your code here
-        return client.RC.ERROR
+        # Creamos el socket
+        sock =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # --INICIO CONEXION--
+        try:
+            sock.connect(client._server)
+        except Exception as e:
+            print("Error de conexión con el servidor: ", e)
+
+        # Se enviarán el código de operación y el alias
+        cop = b'UNREGISTER \0'
+        usa = str(user + '\0').encode()
+
+        try:
+            sock.sendall(cop)
+            sock.sendall(usa)
+        except Exception as e:
+            print("Error al enviar datos en el socket: ", e)
+
+        try:
+            res = client.readNumber(sock)
+        except Exception as e:
+            print("Error al leer datos del socket: ", e)
+
+        # Dependiendo de la respuesta dada, el valor de retorno será distinto
+        #CASO 0: EXITO
+        if res == 0:
+            window['_SERVER_'].print("s> UNREGISTER OK")
+            sock.close()
+            return client.RC.OK
+        #CASO 1: REGISTRADO PREVIAMENTE
+        if res == 1:
+            window['_SERVER_'].print("s> USER DOES NOT EXIST")
+            client.clearRegisterData()
+            sock.close()
+            return client.RC.USER_ERROR
+        #OTROS CASOS (INCLUYE TANTO RES = 2 COMO OTROS VALORES INESPERADOS)
+        else:
+            window['_SERVER_'].print("s> UNREGISTER FAIL")
+            client.clearRegisterData()
+            sock.close()
+            return client.RC.ERROR
+
+        # --FIN CONEXION--
 
 
     # *
