@@ -31,6 +31,7 @@ $(NAME): $(OBJ)
 	$(CC) $(LDFLAGS) $^ -o $@
 
 $(OBJ_DIR)/%.o: $(SCR_DIR)/%.c $(HEAD)
+	@mkdir -p $(dir $@) 
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
