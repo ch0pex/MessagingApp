@@ -10,9 +10,9 @@
 
 #define request_status_msg(op) do { \
 	if(response->status == OK) \
-		printf("%s %s OK\n", op, request->user.user_name); \
+		printf("%s %s OK\n", op, request->user.alias); \
 	else \
-		printf("%s %s FAIL\n", op, request->user.user_name); \
+		printf("%s %s FAIL\n", op, request->user.alias); \
 } while(0) 
 
 t_error_code server_request_register(int sc_copy, t_request *request, t_response *response); 

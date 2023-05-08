@@ -140,7 +140,7 @@ void server_treat_request(void *sc)
 		close(sc_copy); 
 		pthread_exit(0); 
 	}
-
+	
 	if(strcmp(REGISTER, request.op) == SUCCESS)
 		err = server_request_register(sc_copy, &request, &response);
 	else if(strcmp(UNREGISTER, request.op) == SUCCESS)
@@ -161,11 +161,13 @@ void server_treat_request(void *sc)
 		pthread_exit(0); 
 	}
 
-	response.status = htonl(response.status); 
-	err = sendMessage(sc_copy, (char *) &response.status, sizeof(int32_t));
+	char nl_response[MAX_SIZE]; 
+	sprintf(nl_response, "%d", response.status); 
+
+	err = sendMessage(sc_copy, (char *) &nl_response, strlen(nl_response) + 1);
 	if (err == SEND_ERROR) 
 		error_code_print_msg(SEND_ERROR); 
-	
+
 	close(sc_copy);
 	pthread_exit(0);
 }

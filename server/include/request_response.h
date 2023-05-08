@@ -30,7 +30,7 @@ typedef enum{
 */
 typedef struct{
 	char full_name[MAX_SIZE]; 
-	char user_name[MAX_SIZE]; 
+	char alias[MAX_SIZE]; 
 	char date[MAX_SIZE];
 	bool state; 
 	char IP[MAX_SIZE]; 

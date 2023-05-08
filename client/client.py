@@ -27,6 +27,7 @@ class client :
 
     # ******************** METHODS *******************
     # Funcion que decodifica la salida del socket
+    @staticmethod
     def readNumber(sock):
         a = ''
         while True:
@@ -34,10 +35,10 @@ class client :
             if (msg == b'\0'):
                 break;
             a += msg.decode()
-
-        return(int(a,10))
+        return(int(a, 10))
     
     # Limpia los campos de registro en caso de que alguno no sea válido
+    @staticmethod
     def clearRegisterData():
         client._username = None
         client._alias = None
@@ -53,19 +54,20 @@ class client :
     @staticmethod
     def  register(user, window):
         # Creamos el socket
-        sock =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # --INICIO CONEXION--
+        server_address = (client._server, client._port)
         try:
-            sock.connect(client._server)
+            sock.connect(server_address)
         except Exception as e:
             print("Error de conexión con el servidor: ", e)
 
         # Ponemos los datos a enviar en el formato correcto (añadiendo caracter de fin de linea) + usando encode()
         # Se enviarán el código de operación, nombre de usuario, alias y fecha de nacimiento
-        cop = b'REGISTER \0'
-        usn = str(client._username + '\0').encode()
-        usa = str(user + '\0').encode()
-        usbd = str(client._date + '\0').encode()
+        cop = b'REGISTER\0'
+        usn = f"{client._username}\0".encode()
+        usa = f"{user}\0".encode()
+        usbd = f"{client._date}\0".encode()
 
         # Se procede a enviar los datos individualmente por el socket
         try:
@@ -81,6 +83,7 @@ class client :
         try:
             res = client.readNumber(sock)
         except Exception as e:
+            res = 2
             print("Error al leer datos del socket: ", e)
 
         # Dependiendo de la respuesta dada, el valor de retorno será distinto
@@ -113,15 +116,16 @@ class client :
     @staticmethod
     def  unregister(user, window):
         # Creamos el socket
-        sock =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (client._server, client._port) 
         # --INICIO CONEXION--
         try:
-            sock.connect(client._server)
+            sock.connect(server_address)
         except Exception as e:
             print("Error de conexión con el servidor: ", e)
 
         # Se enviarán el código de operación y el alias
-        cop = b'UNREGISTER \0'
+        cop = b'UNREGISTER\0'
         usa = str(user + '\0').encode()
 
         try:
@@ -133,6 +137,7 @@ class client :
         try:
             res = client.readNumber(sock)
         except Exception as e:
+            res = 2
             print("Error al leer datos del socket: ", e)
 
         # Dependiendo de la respuesta dada, el valor de retorno será distinto
