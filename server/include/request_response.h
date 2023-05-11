@@ -32,12 +32,13 @@ typedef struct{
 	char full_name[MAX_SIZE]; 
 	char alias[MAX_SIZE]; 
 	char date[MAX_SIZE];
-	bool state; 
-	char IP[MAX_SIZE]; 
-	int port; 
+	char state[MAX_SIZE];
+	char ip[MAX_SIZE]; 
+	char port[6]; 
 } t_user_data; 
 
 typedef struct {
+
 	char op[MAX_SIZE]; 
 	t_user_data user; 
 } t_request;

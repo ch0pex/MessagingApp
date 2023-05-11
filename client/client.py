@@ -4,6 +4,8 @@ import PySimpleGUI as sg
 from enum import Enum
 import argparse
 import socket
+import threading
+
 
 class client :
 
@@ -43,6 +45,20 @@ class client :
         client._username = None
         client._alias = None
         client._date= None
+
+
+    @staticmethod
+    def messageListen(sock): 
+        sock.listen(5)
+        while True:
+            conn, addr = sock.accept()
+            data = conn.recv(1024)
+            if data:
+                print(data.decode())
+            else:
+                break
+
+
 
     # *
     # * @param user - User name to register in the system
@@ -142,6 +158,7 @@ class client :
 
         # Dependiendo de la respuesta dada, el valor de retorno será distinto
         #CASO 0: EXITO
+
         if res == 0:
             window['_SERVER_'].print("s> UNREGISTER OK")
             sock.close()
@@ -170,10 +187,58 @@ class client :
     # * @return ERROR if another error occurred
     @staticmethod
     def  connect(user, window):
-        window['_SERVER_'].print("s> CONNECT OK")
-        #  Write your code here
-        return client.RC.ERROR
+        # Creamos el socket para escuchar los mensajes mientras estamos connectados 
+        listenSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        listenSocket_address = ("localhost", 0) 
+        listenSocket.bind(listenSocket_address) # Con el puerto 0, se asigna un puerto libre aleatorio
+        thread = threading.Thread(target=client.messageListen, args=(listenSocket,))
+        thread.start()
 
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (client._server, client._port)
+        try:
+            sock.connect(server_address)
+        except Exception as e:
+            print("Error de conexión con el servidor: ", e)
+        
+        # Se enviarán el código de operación y el alias
+        cop = b'CONNECT\0'
+        usa = f"{user}\0".encode()
+        port = f"{listenSocket.getsockname()[1]}\0".encode() 
+
+        try:
+            sock.sendall(cop)
+            sock.sendall(usa)
+            sock.sendall(port)
+        except Exception as e:
+            print("Error al enviar datos en el socket: ", e)
+
+        try:
+            res = client.readNumber(sock)
+        except Exception as e:
+            res = 2
+            print("Error al leer datos del socket: ", e)
+
+        if res == 0: 
+            window['_SERVER_'].print("s> CONNECT OK")
+            client.clearRegisterData()
+            sock.close()
+            return client.RC.OK
+        elif res == 1:
+            window['_SERVER_'].print("s> CONNECT FAIL, USER DOES NOT EXIST")
+            client.clearRegisterData()
+            sock.close()
+            return client.RC.USER_ERROR
+        elif res == 2:
+            window['_SERVER_'].print("s> USER ALREADY CONNECTED")
+            client.clearRegisterData()
+            sock.close()
+            return client.RC.ERROR
+        else:
+            window['_SERVER_'].print("s> CONNECT FAIL")
+            client.clearRegisterData()
+            sock.close()
+            return 3 #He puesto 3 porque aqui hay que contemplar 4 casos de error
 
     # *
     # * @param user - User name to disconnect from the system

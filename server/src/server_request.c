@@ -35,13 +35,17 @@ t_error_code server_request_unregister(int sc_copy, t_request *request, t_respon
 
 t_error_code server_request_connect(int sc_copy, t_request *request, t_response *response)
 {
+
 	if(ERROR == readLine(sc_copy, request->user.alias, MAX_SIZE))
 		return (RECEIVE_ERROR);
-
-	response->status = db_connect(request);
+	
+	if(ERROR == readLine(sc_copy, request->user.port, MAX_SIZE))
+		return (RECEIVE_ERROR);
+	
+	response->status = db_connect(request, response);
 	request_status_msg(CONNECT); 
 
-	return (SUCCESS);
+	return (SUCCESS);			
 }
 
 t_error_code server_request_disconnect(int sc_copy, t_request *request, t_response *response)

@@ -1,0 +1,7 @@
+Nombre completo: Textsdf
+Alias: Textd
+Fecha de nacimiento: 08-05-2023
+Estado: CONNECTED
+IP: 127.0.0.1
+Puerto: 51835
+Mensajes: 

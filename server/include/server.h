@@ -18,10 +18,18 @@
 #include "lines.h"
 
 // Estructura con todo lo necesario para crear un server con sockets
+
 typedef struct {
-	struct sockaddr_in server_addr,  client_addr;	
+	int sc; 
+	struct sockaddr_in  client_addr;
+} t_client_info; 
+
+
+typedef struct {
+    int sd, val;
+	t_client_info client_info;
+	struct sockaddr_in server_addr;	
 	socklen_t size;
-    int sd, sc, val;
 	pthread_t thid;
 	pthread_attr_t t_attr;
 

@@ -101,13 +101,12 @@ void server_loop(t_server *server)
 {
 	signal(SIGINT, sigint_handler); //Configuración de la señal SIGINT
 	while (1){
-		server->sc = accept(server->sd, (struct sockaddr *)&server->client_addr, (socklen_t *)&server->size);
-		if (server->sc == ERROR){
+		server->client_info.sc = accept(server->sd, (struct sockaddr *)&server->client_info.client_addr, (socklen_t *)&server->size);
+		if (server->client_info.sc == ERROR){
 			error_code_print_msg(ACCEPT_ERROR); 
 			continue; 
 		}
-			 
-		if (pthread_create(&server->thid, &server->t_attr, (void *)server_treat_request, (void *)&server->sc) == 0) {
+		if (pthread_create(&server->thid, &server->t_attr, (void *)server_treat_request, (void *)&server->client_info.sc) == 0) {
 			pthread_mutex_lock(&mutex_sc);
 			while (sc_not_copied)
 				pthread_cond_wait(&cond_sc, &mutex_sc);
@@ -124,50 +123,53 @@ void server_treat_request(void *sc)
 {
 	t_request request; 
 	t_response response;
-	int sc_copy, err; 
+	t_client_info client_info_copy;
+	int err; 
 
 
 	pthread_mutex_lock(&mutex_sc);
-	sc_copy = (*(int*) sc);
+	client_info_copy = (*(t_client_info*) sc);
 	sc_not_copied = false;
 	pthread_cond_signal(&cond_sc);
 	pthread_mutex_unlock(&mutex_sc);
 	
-	err = readLine(sc_copy, (char *) &request.op, MAX_SIZE);
+	err = readLine(client_info_copy.sc, (char *) &request.op, MAX_SIZE);
 	if (err == ERROR)
 	{
 		error_code_print_msg(err); 
-		close(sc_copy); 
+		close(client_info_copy.sc); 
 		pthread_exit(0); 
 	}
 	
 	if(strcmp(REGISTER, request.op) == SUCCESS)
-		err = server_request_register(sc_copy, &request, &response);
+		err = server_request_register(client_info_copy.sc, &request, &response);
 	else if(strcmp(UNREGISTER, request.op) == SUCCESS)
-		err = server_request_unregister(sc_copy, &request, &response);
-	else if(strcmp(CONNECT, request.op) == SUCCESS)
-		err = server_request_connect(sc_copy, &request, &response);
+		err = server_request_unregister(client_info_copy.sc, &request, &response);
+	else if(strcmp(CONNECT, request.op) == SUCCESS){
+		inet_ntop(AF_INET, &(client_info_copy.client_addr.sin_addr), request.user.ip, INET_ADDRSTRLEN);
+		err = server_request_connect(client_info_copy.sc, &request, &response);
+	}
 	else if(strcmp(DISCONNECT, request.op) == SUCCESS)
-		err = server_request_disconnect(sc_copy, &request, &response);
+		err = server_request_disconnect(client_info_copy.sc, &request, &response);
 	else if(strcmp(SEND_MESSAGE, request.op) == SUCCESS)
-		err = server_request_send_message(sc_copy, &request, &response);
+		err = server_request_send_message(client_info_copy.sc, &request, &response);
 	else if(strcmp(CONNECTED_USERS, request.op) == SUCCESS)	
-		err = server_request_connected_users(sc_copy, &request, &response);
+		err = server_request_connected_users(client_info_copy.sc, &request, &response);
 	
 	if (err != SUCCESS)
 	{
 		error_code_print_msg(err); 
-		close(sc_copy); 
+		close(client_info_copy.sc); 
 		pthread_exit(0); 
 	}
 
 	char nl_response[MAX_SIZE]; 
 	sprintf(nl_response, "%d", response.status); 
 
-	err = sendMessage(sc_copy, (char *) &nl_response, strlen(nl_response) + 1);
+	err = sendMessage(client_info_copy.sc, (char *) &nl_response, strlen(nl_response) + 1);
 	if (err == SEND_ERROR) 
 		error_code_print_msg(SEND_ERROR); 
 
-	close(sc_copy);
+	close(client_info_copy.sc);
 	pthread_exit(0);
 }

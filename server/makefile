@@ -18,7 +18,7 @@ HEAD = $(wildcard $(HEAD_DIR)/*.h)
 CC = gcc
 HEAD_FLAG = -I$(HEAD_DIR)
 ERR_FLAG = -Wall -Wextra
-CFLAGS =  $(ERR_FLAG) $(HEAD_FLAG)
+CFLAGS =  -g $(ERR_FLAG) $(HEAD_FLAG)
 LDLIBS = -lpthread -lrt
 
 
