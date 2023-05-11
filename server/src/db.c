@@ -64,7 +64,7 @@ t_response_status db_connect(t_request *request, t_response *response)
 	
 	db_get_field(user_data, STATE_FIELD, response->user.state);
 	
-	if(strcmp(response->user.state, "CONNECTED") == 0)
+	if(strlen(response->user.state) < 11) 
 	{
 		fclose(user_data); 
 		return (FAIL); 
@@ -78,9 +78,34 @@ t_response_status db_connect(t_request *request, t_response *response)
 	return (OK); 
 } 
 
-t_response_status db_disconnect(char *username)
+t_response_status db_disconnect(t_request *request, t_response *response)
 {
-	return (OK); 
+	FILE *user_data;
+	char ip[MAX_SIZE]; 
+	char port[MAX_SIZE];
+
+	memset(ip, 0, MAX_SIZE);
+	memset(port, 0, MAX_SIZE); 
+
+	user_data = db_open_user(request->user.alias);
+
+	if (user_data == NULL)
+		return (USER_ERROR); 
+
+	db_get_field(user_data, STATE_FIELD, response->user.state);
+
+	if(strlen(response->user.state) > 11) 
+	{
+		fclose(user_data); 
+		return (FAIL); 
+	}
+
+	db_set_field(user_data, STATE_FIELD, "DISCONNECTED");
+	db_set_field(user_data, IP_FIELD, ip);
+	db_set_field(user_data, PORT_FIELD, port);
+
+	fclose(user_data);
+	return (OK);
 }
 
 t_response_status db_send_message(t_request *request)
@@ -149,7 +174,6 @@ t_error_code db_set_field(FILE *file, char *field, char *value)
 	fscanf(file, "Nombre completo: %[^\n]\nAlias: %[^\n]\nFecha de nacimiento: %[^\n]\nEstado: %[^\n]\nIP: %[^\n]\nPuerto: %[^\n]\n", 
 	full_name, alias, date, state, ip, port);
 
-	
 	if(strcmp(field, "Nombre completo") == 0)
 		strcpy(full_name, value);
 	else if(strcmp(field, "Alias") == 0)
@@ -163,8 +187,10 @@ t_error_code db_set_field(FILE *file, char *field, char *value)
 	else if(strcmp(field, "Puerto") == 0)
 		strcpy(port, value);
 
+	db_clean_file(alias); // Limpiamos el archivo para volver a escribirlo
 	fseek(file, 0, SEEK_SET);
-	fprintf(file, "Nombre completo: %s\nAlias: %s\nFecha de nacimiento: %s\nEstado: %s\nIP: %s\nPuerto: %s\nMensajes: %s\n", full_name, alias, date, state, ip, port, messages);
+	fprintf(file, "Nombre completo: %s\nAlias: %s\nFecha de nacimiento: %s\nEstado: %s\nIP: %s\nPuerto: %s\nMensajes: %s\n", 
+	full_name, alias, date, state, ip, port, messages);
 	return (SUCCESS);
 }
 
@@ -218,4 +244,15 @@ t_error_code db_get_messages(FILE *file, char *messages)
 	free(field_name); 
 	free(line); 
 	return (err); 
+}
+
+void db_clean_file(char *user)
+{
+	char *user_path = (char *) malloc(strlen(user) + 8);  
+	FILE* user_data; 
+
+	sprintf(user_path, "db/%s.txt", user); 
+	user_data = fopen(user_path, "w"); 
+	free(user_path); 
+	fclose(user_data);
 }

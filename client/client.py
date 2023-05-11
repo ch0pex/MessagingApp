@@ -84,7 +84,7 @@ class client :
         usn = f"{client._username}\0".encode()
         usa = f"{user}\0".encode()
         usbd = f"{client._date}\0".encode()
-
+        
         # Se procede a enviar los datos individualmente por el socket
         try:
             sock.sendall(cop)
@@ -161,18 +161,17 @@ class client :
 
         if res == 0:
             window['_SERVER_'].print("s> UNREGISTER OK")
+            client.clearRegisterData() 
             sock.close()
             return client.RC.OK
         #CASO 1: REGISTRADO PREVIAMENTE
         if res == 1:
             window['_SERVER_'].print("s> USER DOES NOT EXIST")
-            client.clearRegisterData()
             sock.close()
             return client.RC.USER_ERROR
         #OTROS CASOS (INCLUYE TANTO RES = 2 COMO OTROS VALORES INESPERADOS)
         else:
             window['_SERVER_'].print("s> UNREGISTER FAIL")
-            client.clearRegisterData()
             sock.close()
             return client.RC.ERROR
 
@@ -221,22 +220,18 @@ class client :
 
         if res == 0: 
             window['_SERVER_'].print("s> CONNECT OK")
-            client.clearRegisterData()
             sock.close()
             return client.RC.OK
         elif res == 1:
             window['_SERVER_'].print("s> CONNECT FAIL, USER DOES NOT EXIST")
-            client.clearRegisterData()
             sock.close()
             return client.RC.USER_ERROR
         elif res == 2:
             window['_SERVER_'].print("s> USER ALREADY CONNECTED")
-            client.clearRegisterData()
             sock.close()
             return client.RC.ERROR
         else:
             window['_SERVER_'].print("s> CONNECT FAIL")
-            client.clearRegisterData()
             sock.close()
             return 3 #He puesto 3 porque aqui hay que contemplar 4 casos de error
 
@@ -248,9 +243,49 @@ class client :
     # * @return ERROR if another error occurred
     @staticmethod
     def  disconnect(user, window):
-        window['_SERVER_'].print("s> DISCONNECT OK")
-        #  Write your code here
-        return client.RC.ERROR
+   # Creamos el socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (client._server, client._port) 
+        # --INICIO CONEXION--
+        try:
+            sock.connect(server_address)
+        except Exception as e:
+            print("Error de conexión con el servidor: ", e)
+
+        # Se enviarán el código de operación y el alias
+        cop = b'DISCONNECT\0'
+        usa = str(user + '\0').encode()
+
+        try:
+            sock.sendall(cop)
+            sock.sendall(usa)
+        except Exception as e:
+            print("Error al enviar datos en el socket: ", e)
+
+        try:
+            res = client.readNumber(sock)
+        except Exception as e:
+            res = 2
+            print("Error al leer datos del socket: ", e)
+
+        # Dependiendo de la respuesta dada, el valor de retorno será distinto
+        #CASO 0: EXITO
+        if res == 0: 
+            window['_SERVER_'].print("s> DISCONNECT OK")
+            sock.close()
+            return client.RC.OK
+        elif res == 1:
+            window['_SERVER_'].print("s> DISCONNECT FAIL / USER DOES NOT EXIST")
+            sock.close()
+            return client.RC.USER_ERROR
+        elif res == 2:
+            window['_SERVER_'].print("s> DISCONNECT FAIL / USER NOT CONNECT")
+            sock.close()
+            return client.RC.ERROR
+        else:
+            window['_SERVER_'].print("s> DISCONNECT FAIL")
+            sock.close()
+            return 3 
 
     # *
     # * @param user    - Receiver user name

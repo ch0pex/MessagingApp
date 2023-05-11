@@ -1,0 +1,9 @@
+Nombre completo: Textd
+Alias: teta
+Fecha de nacimiento: 09-05-2023
+Estado: DISCONNECTED
+IP: 
+Puerto: 
+Mensajes: 
+es: 
+nsajes: 

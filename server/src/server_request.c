@@ -36,6 +36,8 @@ t_error_code server_request_unregister(int sc_copy, t_request *request, t_respon
 t_error_code server_request_connect(int sc_copy, t_request *request, t_response *response)
 {
 
+	char *messages; 
+
 	if(ERROR == readLine(sc_copy, request->user.alias, MAX_SIZE))
 		return (RECEIVE_ERROR);
 	
@@ -45,6 +47,8 @@ t_error_code server_request_connect(int sc_copy, t_request *request, t_response 
 	response->status = db_connect(request, response);
 	request_status_msg(CONNECT); 
 
+	// pillar los mensajes pendientes, si existen bucle enviando los mensajes
+
 	return (SUCCESS);			
 }
 
@@ -53,7 +57,7 @@ t_error_code server_request_disconnect(int sc_copy, t_request *request, t_respon
 	if(ERROR == readLine(sc_copy, request->user.alias, MAX_SIZE))
 		return (RECEIVE_ERROR);
 
-	response->status = db_disconnect(request->user.alias);
+	response->status = db_disconnect(request, response);
 	request_status_msg(DISCONNECT); 
 
 	return (SUCCESS);
