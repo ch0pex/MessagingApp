@@ -1,7 +1,0 @@
-Nombre completo: Texta
-Alias: Textaaaaaaaaaaaaaaaaa
-Fecha de nacimiento: 19-05-2023
-Estado: DISCONNECTED
-IP: 
-Puerto: 
-Mensajes: 

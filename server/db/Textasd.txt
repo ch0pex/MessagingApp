@@ -1,7 +1,0 @@
-Nombre completo: Textd
-Alias: Textasd
-Fecha de nacimiento: 26-05-2023
-Estado: DISCONNECTED
-IP: 
-Puerto: 
-Mensajes: 

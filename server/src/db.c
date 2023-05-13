@@ -151,7 +151,6 @@ t_response_status db_connected_users(t_request *request, t_response *response)
 		}
 		
 		db_get_field(user_data, ALIAS_FIELD, response->user.alias);
-		printf("%s Longitud: %ld", response->user.alias, strlen(response->user.alias));
 		response->connected_users.count++;
 		response->connected_users.array = (char **) realloc(response->connected_users.array, response->connected_users.count * sizeof(char *));
 		response->connected_users.array[response->connected_users.count - 1] = (char *) malloc(strlen(response->user.alias) + 1);
@@ -162,8 +161,6 @@ t_response_status db_connected_users(t_request *request, t_response *response)
 	return (OK);
 
 }
-
-
 
 /**********************************************************
  * Function: Devuelve el archivo con los datos del usuario 
@@ -181,7 +178,9 @@ FILE* db_open_user(char *user)
 	return (user_data); 
 }
 
-
+/**********************************************************
+ * Function: Cambia el valor de un campo del archivo
+ *********************************************************/
 t_error_code db_set_field(FILE *file, char *field, char *value)
 {	
 	char alias[MAX_SIZE];
@@ -217,6 +216,9 @@ t_error_code db_set_field(FILE *file, char *field, char *value)
 	return (SUCCESS);
 }
 
+/**********************************************************
+ * Function: Obtiene el valor de un campo del archivo
+ *********************************************************/
 t_error_code db_get_field(FILE *file, char *field, char *value)
 {
 	t_error_code err = ERROR;
@@ -270,13 +272,56 @@ t_error_code db_get_messages(FILE *file, char *messages)
 	return (err); 
 }
 
+t_error_code db_store_message(char *user, char *message)
+{
+	char *user_path = (char *) malloc(strlen(user) + 8);  
+	FILE *user_data; 
+	char messages[MAX_SIZE]; 
+
+	sprintf(user_path, "db/%s.txt", user); 
+	user_data = fopen(user_path, "r+"); 
+	free(user_path); 
+
+	db_get_messages(user_data, messages); 
+	strcat(messages, message); 
+	strcat(messages, "\n"); 
+	db_set_field(user_data, MESSAGES_FIELD, messages); 
+
+	fclose(user_data); 
+	return (SUCCESS); 
+}
+
+/**********************************************************
+ * Function: Limpia el archivo de un usuario 
+ *********************************************************/
 void db_clean_file(char *user)
 {
 	char *user_path = (char *) malloc(strlen(user) + 8);  
-	FILE* user_data; 
+	FILE *user_data; 
 
 	sprintf(user_path, "db/%s.txt", user); 
 	user_data = fopen(user_path, "w"); 
 	free(user_path); 
 	fclose(user_data);
+}
+
+bool db_user_is_connected(char *user) 
+{
+	FILE *user_data;
+	char state[MAX_SIZE];
+	user_data = db_open_user(user);
+	if (user_data == NULL)
+	{
+		fclose(user_data);
+		return (false);
+	}
+	
+	db_get_field(user_data, STATE_FIELD, state);
+	if (strcmp(state, CONNECT) == 0)
+	{
+		fclose(user_data);
+		return (true);
+	}
+	fclose(user_data);
+	return (false);
 }

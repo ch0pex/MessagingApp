@@ -36,9 +36,7 @@ t_error_code server_init(t_server *server, char* port)
 	if (err != SUCCESS)
 		return (err); 
 
-	printf("init server %s:%d\n", inet_ntoa(server->server_addr.sin_addr), ntohs(server->server_addr.sin_port));
-	fflush(stdout); 
-
+	printf("init server %s:%d\n", inet_ntoa(server->server_addr.sin_addr), atoi(port));
 	server_thread_config(server); 
 	return (SUCCESS); 
 }
@@ -119,6 +117,10 @@ void server_loop(t_server *server)
 	
 }
 
+/**********************************************************
+ * Function: Trata las peticiones de los clientes de forma
+ * concurrente en otro hilo.
+ *********************************************************/
 void server_treat_request(void *sc)
 {
 	t_request request; 
@@ -126,6 +128,8 @@ void server_treat_request(void *sc)
 	t_client_info client_info_copy;
 	int err; 
 
+
+	
 
 	pthread_mutex_lock(&mutex_sc);
 	client_info_copy = (*(t_client_info*) sc);
@@ -140,15 +144,15 @@ void server_treat_request(void *sc)
 		close(client_info_copy.sc); 
 		pthread_exit(0); 
 	}
-	
+
 	if(strcmp(REGISTER, request.op) == SUCCESS)
 		err = server_request_register(client_info_copy.sc, &request, &response);
 	else if(strcmp(UNREGISTER, request.op) == SUCCESS)
 		err = server_request_unregister(client_info_copy.sc, &request, &response);
 	else if(strcmp(CONNECT, request.op) == SUCCESS){
-		inet_ntop(AF_INET, &(client_info_copy.client_addr.sin_addr), request.user.ip, INET_ADDRSTRLEN);
+		inet_ntop(AF_INET, &(client_info_copy.client_addr.sin_addr), request.user.ip, INET_ADDRSTRLEN); // IP del cliente
 		err = server_request_connect(client_info_copy.sc, &request, &response);
-	}
+	}	
 	else if(strcmp(DISCONNECT, request.op) == SUCCESS)
 		err = server_request_disconnect(client_info_copy.sc, &request, &response);
 	else if(strcmp(SEND_MESSAGE, request.op) == SUCCESS)

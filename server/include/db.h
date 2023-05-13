@@ -25,10 +25,13 @@ t_response_status db_unregister(char *username);
 t_response_status db_connect(t_request *request, t_response *response); 
 t_response_status db_disconnect(t_request *request, t_response *response); 
 t_response_status db_send_message(t_request *request); 
-t_response_status db_connected_users(); 
+t_response_status db_connected_users(t_request *request, t_response *response); 
+
 t_error_code db_get_field(FILE *file, char *field, char *value);
 t_error_code db_set_field(FILE *file, char *field, char *value);
 t_error_code db_get_messages(FILE *file, char *messages);
+
+bool db_user_is_connected(char *user);
 FILE* db_open_user(char *user); 
 void db_clean_file(char *user);
 #endif 

@@ -1,7 +1,0 @@
-Nombre completo: Textsddsaf
-Alias: Textdddddddddddddddd
-Fecha de nacimiento: 17-05-2023
-Estado: CONNECTED
-IP: 127.0.0.1
-Puerto: 33905
-Mensajes: 

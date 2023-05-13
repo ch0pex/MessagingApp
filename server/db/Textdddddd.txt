@@ -1,7 +1,0 @@
-Nombre completo: Textdd
-Alias: Textdddddd
-Fecha de nacimiento: 09-05-2023
-Estado: CONNECTED
-IP: 127.0.0.1
-Puerto: 32795
-Mensajes: 
