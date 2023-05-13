@@ -18,16 +18,6 @@ typedef enum{
 	FAIL
 } t_response_status; 
 
-/*
-typedef enum{
-	REGISTER = 0,
-	UNREGISTER, 
-	CONNECT,
-	DISCONNECT,
-	SEND_MESSAGE,
-	CONNECTED_USERS
-} t_request_code; 
-*/
 typedef struct{
 	char full_name[MAX_SIZE]; 
 	char alias[MAX_SIZE]; 
@@ -35,11 +25,12 @@ typedef struct{
 	char state[MAX_SIZE];
 	char ip[MAX_SIZE]; 
 	char port[6]; 
+	char messages[MAX_SIZE]; // TODO: Cambiar a un array de strings
 } t_user_data; 
 
 typedef struct {
 	char op[MAX_SIZE]; 
-	t_user_data user; 
+	t_user_data *user; 
 } t_request;
 
 typedef struct {
@@ -49,11 +40,9 @@ typedef struct {
 
 typedef struct{
 	t_response_status status;
-	t_user_data user; 
+	t_user_data *user; 
 	t_dynamic_array connected_users;
 	t_dynamic_array messages;
 } t_response; 
-
-
 
 #endif 

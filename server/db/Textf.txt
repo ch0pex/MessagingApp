@@ -1,0 +1,7 @@
+Nombre completo: Textaaa
+Alias: Textf
+Fecha de nacimiento: 20-05-2023
+Estado: DISCONNECTED
+IP: 
+Puerto: 
+Mensajes: 

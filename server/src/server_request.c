@@ -14,13 +14,13 @@ t_error_code server_request_register(int sc_copy, t_request *request, t_response
 {
 	char nl_response[2];
 
-	if(ERROR == readLine(sc_copy, request->user.full_name, MAX_SIZE))
+	if(ERROR == readLine(sc_copy, request->user->full_name, MAX_SIZE))
 		return (RECEIVE_ERROR); 
 
-	if(ERROR == readLine(sc_copy, request->user.alias, MAX_SIZE))
+	if(ERROR == readLine(sc_copy, request->user->alias, MAX_SIZE))
 		return (RECEIVE_ERROR);
 
-	if(ERROR == readLine(sc_copy, request->user.date, MAX_SIZE))
+	if(ERROR == readLine(sc_copy, request->user->date, MAX_SIZE))
 		return (RECEIVE_ERROR);
 
 	response->status = db_register(request);
@@ -42,10 +42,10 @@ t_error_code server_request_unregister(int sc_copy, t_request *request, t_respon
 {
 	char nl_response[2];
 
-	if(ERROR == readLine(sc_copy, request->user.alias, MAX_SIZE))
+	if(ERROR == readLine(sc_copy, request->user->alias, MAX_SIZE))
 		return (RECEIVE_ERROR);
 
-	response->status = db_unregister(request->user.alias);
+	response->status = db_unregister(request->user->alias);
 	sprintf(nl_response, "%d", response->status);
 
 	if (SEND_ERROR == sendMessage(sc_copy, (char *) &nl_response, strlen(nl_response) + 1))  
@@ -67,13 +67,13 @@ t_error_code server_request_connect(int sc_copy, t_request *request, t_response 
 {
 	char nl_response[2];
 
-	if(ERROR == readLine(sc_copy, request->user.alias, MAX_SIZE))
+	if(ERROR == readLine(sc_copy, request->user->alias, MAX_SIZE))
 		return (RECEIVE_ERROR);
 	
-	if(ERROR == readLine(sc_copy, request->user.port, MAX_SIZE))
+	if(ERROR == readLine(sc_copy, request->user->port, MAX_SIZE))
 		return (RECEIVE_ERROR);
 	
-	response->status = db_connect(request, response);
+	response->status = db_connect(request);
 	sprintf(nl_response, "%d", response->status);
 
 	if (SEND_ERROR == sendMessage(sc_copy, (char *) &nl_response, strlen(nl_response) + 1)) 
@@ -95,7 +95,7 @@ t_error_code server_request_disconnect(int sc_copy, t_request *request, t_respon
 {
 	char nl_response[2];
 
-	if(ERROR == readLine(sc_copy, request->user.alias, MAX_SIZE))
+	if(ERROR == readLine(sc_copy, request->user->alias, MAX_SIZE))
 		return (RECEIVE_ERROR);
 
 	response->status = db_disconnect(request, response);
@@ -129,6 +129,10 @@ t_error_code server_request_connected_users(int sc_copy, t_request *request, t_r
 {
 	char nl_response[MAX_SIZE];
 	
+
+	if(ERROR == readLine(sc_copy, request->user->alias, MAX_SIZE))
+		return (RECEIVE_ERROR);
+
 	response->status = db_connected_users(request, response);
 	sprintf(nl_response, "%d", response->status);
 	

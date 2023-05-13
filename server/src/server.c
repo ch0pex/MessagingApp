@@ -128,8 +128,8 @@ void server_treat_request(void *sc)
 	t_client_info client_info_copy;
 	int err; 
 
-
-	
+	request.user = (t_user_data *) calloc(1, sizeof(t_user_data));
+	response.user = (t_user_data *) calloc(1, sizeof(t_user_data));
 
 	pthread_mutex_lock(&mutex_sc);
 	client_info_copy = (*(t_client_info*) sc);
@@ -140,6 +140,8 @@ void server_treat_request(void *sc)
 	err = readLine(client_info_copy.sc, (char *) &request.op, MAX_SIZE);
 	if (err == ERROR)
 	{
+		free(request.user);
+		free(response.user);
 		error_code_print_msg(err); 
 		close(client_info_copy.sc); 
 		pthread_exit(0); 
@@ -150,7 +152,7 @@ void server_treat_request(void *sc)
 	else if(strcmp(UNREGISTER, request.op) == SUCCESS)
 		err = server_request_unregister(client_info_copy.sc, &request, &response);
 	else if(strcmp(CONNECT, request.op) == SUCCESS){
-		inet_ntop(AF_INET, &(client_info_copy.client_addr.sin_addr), request.user.ip, INET_ADDRSTRLEN); // IP del cliente
+		inet_ntop(AF_INET, &(client_info_copy.client_addr.sin_addr), request.user->ip, INET_ADDRSTRLEN); // IP del cliente
 		err = server_request_connect(client_info_copy.sc, &request, &response);
 	}	
 	else if(strcmp(DISCONNECT, request.op) == SUCCESS)
@@ -162,11 +164,17 @@ void server_treat_request(void *sc)
 	
 	if (err != SUCCESS)
 	{
+		free(request.user);
+		free(response.user);
 		error_code_print_msg(err); 
 		close(client_info_copy.sc); 
 		pthread_exit(0); 
 	}
 
+	free(request.user);
+	free(response.user);
 	close(client_info_copy.sc);
 	pthread_exit(0);
 }
+
+
