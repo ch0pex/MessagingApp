@@ -1,7 +1,0 @@
-Nombre completo: Textt
-Alias: ttttttttttttttttttt
-Fecha de nacimiento: 16-05-2023
-Estado: CONNECTED
-IP: 127.0.0.1
-Puerto: 43383
-Mensajes: 

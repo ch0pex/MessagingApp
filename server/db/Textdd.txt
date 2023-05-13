@@ -1,0 +1,7 @@
+Nombre completo: Textdddd
+Alias: Textdd
+Fecha de nacimiento: 24-05-2023
+Estado: CONNECTED
+IP: 127.0.0.1
+Puerto: 57681
+Mensajes: 

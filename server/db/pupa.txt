@@ -1,7 +1,0 @@
-Nombre completo: Textd
-Alias: pupa
-Fecha de nacimiento: 31-05-2023
-Estado: CONNECTED
-IP: 127.0.0.1
-Puerto: 47445
-Mensajes: 

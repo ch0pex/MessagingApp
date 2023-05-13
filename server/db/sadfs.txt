@@ -1,0 +1,7 @@
+Nombre completo: asdf
+Alias: sadfs
+Fecha de nacimiento: 18-05-2023
+Estado: CONNECTED
+IP: 127.0.0.1
+Puerto: 41683
+Mensajes: 

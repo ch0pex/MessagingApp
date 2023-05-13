@@ -1,0 +1,7 @@
+Nombre completo: TextD
+Alias: TextSADDDDDDDDDDDD
+Fecha de nacimiento: 16-05-2023
+Estado: DISCONNECTED
+IP: 
+Puerto: 
+Mensajes: 

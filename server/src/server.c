@@ -163,13 +163,6 @@ void server_treat_request(void *sc)
 		pthread_exit(0); 
 	}
 
-	char nl_response[MAX_SIZE]; 
-	sprintf(nl_response, "%d", response.status); 
-
-	err = sendMessage(client_info_copy.sc, (char *) &nl_response, strlen(nl_response) + 1);
-	if (err == SEND_ERROR) 
-		error_code_print_msg(SEND_ERROR); 
-
 	close(client_info_copy.sc);
 	pthread_exit(0);
 }

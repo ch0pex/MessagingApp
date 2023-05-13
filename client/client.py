@@ -30,14 +30,14 @@ class client :
     # ******************** METHODS *******************
     # Funcion que decodifica la salida del socket
     @staticmethod
-    def readNumber(sock):
+    def recvMessage(sock):
         a = ''
         while True:
             msg = sock.recv(1)
             if (msg == b'\0'):
                 break;
             a += msg.decode()
-        return(int(a, 10))
+        return(a)
     
     # Limpia los campos de registro en caso de que alguno no sea válido
     @staticmethod
@@ -97,7 +97,7 @@ class client :
         # Ahora recibimos la respuesta del servidor usando la función vista en los ejemplos, que permite
         # leer números directamente del socket
         try:
-            res = client.readNumber(sock)
+            res = int(client.recvMessage(sock), 10)
         except Exception as e:
             res = 2
             print("Error al leer datos del socket: ", e)
@@ -151,7 +151,7 @@ class client :
             print("Error al enviar datos en el socket: ", e)
 
         try:
-            res = client.readNumber(sock)
+            res = int(client.recvMessage(sock), 10)
         except Exception as e:
             res = 2
             print("Error al leer datos del socket: ", e)
@@ -213,9 +213,9 @@ class client :
             print("Error al enviar datos en el socket: ", e)
 
         try:
-            res = client.readNumber(sock)
+            res = int(client.recvMessage(sock), 10)
         except Exception as e:
-            res = 2
+            res = 3
             print("Error al leer datos del socket: ", e)
 
         if res == 0: 
@@ -254,7 +254,7 @@ class client :
 
         # Se enviarán el código de operación y el alias
         cop = b'DISCONNECT\0'
-        usa = str(user + '\0').encode()
+        usa = f"{user}\0".encode()
 
         try:
             sock.sendall(cop)
@@ -263,9 +263,9 @@ class client :
             print("Error al enviar datos en el socket: ", e)
 
         try:
-            res = client.readNumber(sock)
+            res = int(client.recvMessage(sock), 10)
         except Exception as e:
-            res = 2
+            res = 3
             print("Error al leer datos del socket: ", e)
 
         # Dependiendo de la respuesta dada, el valor de retorno será distinto
@@ -319,9 +319,61 @@ class client :
 
     @staticmethod
     def  connectedUsers(window):
-        window['_SERVER_'].print("s> CONNECTED USERS OK")
-        #  Write your code here
-        return client.RC.ERROR
+        connectedUsers = []
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (client._server, client._port) 
+        # --INICIO CONEXION--
+        try:
+            sock.connect(server_address)
+        except Exception as e:
+            print("Error de conexión con el servidor: ", e)
+
+        # Se enviarán el código de operación y el alias
+        cop = b'CONNECTEDUSERS\0'
+        usa = f"{client._alias}\0".encode()
+
+        try:
+            sock.sendall(cop)
+            sock.sendall(usa)
+        except Exception as e:
+            print("Error al enviar datos en el socket: ", e)
+
+        try:
+            res = int(client.recvMessage(sock), 10)
+        except Exception as e:
+            res = 3
+            usersCount = 0 
+            print("Error al leer datos del socket: ", e)
+
+
+        
+
+
+        # Dependiendo de la respuesta dada, el valor de retorno será distinto
+        #CASO 0: EXITO
+        if res == 0: 
+            try:
+                usersCount = int(client.recvMessage(sock), 10)
+            except Exception as e:
+                usersCount = 0 
+                print("Error al leer datos del socket: ", e)
+
+            while usersCount > 0: 
+                connectedUsers.append(client.recvMessage(sock))
+                usersCount -= 1
+            
+            window['_SERVER_'].print(f's> CONNECTED USERS ({len(connectedUsers)}) OK - {", ".join(connectedUsers)}')
+            sock.close()
+            return client.RC.OK
+        elif res == 1:
+            window['_SERVER_'].print("s> CONNECTED USERS FAIL / USER IS NOT CONNECTED")
+            sock.close()
+            return client.RC.USER_ERROR
+        else:
+            window['_SERVER_'].print("s> CONNECTED USERS FAIL")
+            sock.close()
+            return client.RC.ERROR
+
 
 
     @staticmethod

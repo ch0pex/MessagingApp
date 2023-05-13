@@ -64,7 +64,7 @@ t_response_status db_connect(t_request *request, t_response *response)
 	
 	db_get_field(user_data, STATE_FIELD, response->user.state);
 	
-	if(strlen(response->user.state) < 11) 
+	if(strcmp(response->user.state, "CONNECTED") == 0) 
 	{
 		fclose(user_data); 
 		return (FAIL); 
@@ -81,11 +81,6 @@ t_response_status db_connect(t_request *request, t_response *response)
 t_response_status db_disconnect(t_request *request, t_response *response)
 {
 	FILE *user_data;
-	char ip[MAX_SIZE]; 
-	char port[MAX_SIZE];
-
-	memset(ip, 0, MAX_SIZE);
-	memset(port, 0, MAX_SIZE); 
 
 	user_data = db_open_user(request->user.alias);
 
@@ -94,15 +89,15 @@ t_response_status db_disconnect(t_request *request, t_response *response)
 
 	db_get_field(user_data, STATE_FIELD, response->user.state);
 
-	if(strlen(response->user.state) > 11) 
+	if(strcmp(response->user.state, "DISCONNECTED") == 0) // Si el estado es DISCONNECTED
 	{
 		fclose(user_data); 
 		return (FAIL); 
 	}
 
 	db_set_field(user_data, STATE_FIELD, "DISCONNECTED");
-	db_set_field(user_data, IP_FIELD, ip);
-	db_set_field(user_data, PORT_FIELD, port);
+	db_set_field(user_data, IP_FIELD, response->user.ip);
+	db_set_field(user_data, PORT_FIELD, response->user.port);
 
 	fclose(user_data);
 	return (OK);
@@ -113,9 +108,59 @@ t_response_status db_send_message(t_request *request)
 	return (OK); 
 }
 
-t_response_status db_connected_users()
+t_response_status db_connected_users(t_request *request, t_response *response)
 {
-	return (OK); 
+	DIR *dir = opendir("db");
+	FILE *user_data;
+	struct dirent *ent;
+	response->connected_users.count = 0; 
+	response->connected_users.array = NULL;  
+
+
+	user_data = db_open_user(request->user.alias);
+	if(user_data == NULL)
+		return (FAIL);
+	
+	db_get_field(user_data, STATE_FIELD, response->user.state);
+
+	if (strcmp(response->user.state, "DISCONNECTED") == 0) // Si el estado es DISCONNECTED 
+	{
+		fclose(user_data); 
+		return (USER_ERROR); 
+	}
+
+	fclose(user_data);
+
+
+	while ((ent = readdir(dir)))
+	{
+		char user_name[MAX_SIZE];
+		if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
+			continue;
+
+		strcpy(user_name, ent->d_name);
+		user_name[strlen(user_name) - 4] = '\0';
+		user_data = db_open_user(user_name);
+		if (user_data == NULL)
+			continue;
+
+		db_get_field(user_data, STATE_FIELD, response->user.state);
+		if(strcmp(response->user.state, "DISCONNECTED") == 0){
+			fclose(user_data);
+			continue;
+		}
+		
+		db_get_field(user_data, ALIAS_FIELD, response->user.alias);
+		printf("%s Longitud: %ld", response->user.alias, strlen(response->user.alias));
+		response->connected_users.count++;
+		response->connected_users.array = (char **) realloc(response->connected_users.array, response->connected_users.count * sizeof(char *));
+		response->connected_users.array[response->connected_users.count - 1] = (char *) malloc(strlen(response->user.alias) + 1);
+		strcpy(response->connected_users.array[response->connected_users.count - 1], response->user.alias);
+		fclose(user_data);	
+	}
+	closedir(dir);
+	return (OK);
+
 }
 
 
@@ -138,29 +183,7 @@ FILE* db_open_user(char *user)
 
 
 t_error_code db_set_field(FILE *file, char *field, char *value)
-{	/*
-	t_error_code err = ERROR;
-	char *line = NULL; 
-	size_t len = 0; 
-	ssize_t read; 
-	char *field_name = (char *) malloc(strlen(field) + 2); 
-
-	sprintf(field_name, "%s:", field); 
-
-	while ((read = getline(&line, &len, file)) != -1)
-	{	
-		if (strstr(line, field_name) != NULL)
-		{
-			fseek(file, -read, SEEK_CUR); 
-			err = SUCCESS;
-			fprintf(file, "%s: %s\n", field, value); 
-			break; 
-		}
-	}
-	fseek(file, 0, SEEK_SET);
-	free(field_name); 
-	free(line); 
-	return (err);*/
+{	
 	char alias[MAX_SIZE];
 	char full_name[MAX_SIZE];
 	char date[MAX_SIZE];
@@ -212,6 +235,7 @@ t_error_code db_get_field(FILE *file, char *field, char *value)
 		if (strstr(line, field_name) != NULL)
 		{
 			strcpy(value, line + strlen(field_name) + 1); 
+			value[strlen(value) - 1] = '\0';
 			err = SUCCESS;
 			break; 
 		}
