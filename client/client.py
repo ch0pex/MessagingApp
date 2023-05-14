@@ -39,6 +39,15 @@ class client :
             a += msg.decode()
         return(a)
     
+    @staticmethod
+    def recvFullMessage(sock):
+        a = ''
+        while True:
+            msg = sock.recv(1024)
+            if (msg == b'\0'):
+                break;
+            a += msg.decode()
+        return(a)
     # Limpia los campos de registro en caso de que alguno no sea válido
     @staticmethod
     def clearRegisterData():
@@ -296,10 +305,56 @@ class client :
     # * @return ERROR the user does not exist or another error occurred
     @staticmethod
     def  send(user, message, window):
-        window['_SERVER_'].print("s> SEND MESSAGE OK")
-        print("SEND " + user + " " + message)
-        #  Write your code here
-        return client.RC.ERROR
+   # Creamos el socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (client._server, client._port) 
+        # --INICIO CONEXION--
+        try:
+            sock.connect(server_address)
+        except Exception as e:
+            print("Error de conexión con el servidor: ", e)
+
+        # Se enviarán el código de operación y el alias
+        cop = b'SEND\0'
+        env = f"{client._alias}\0".encode()
+        recv = f"{user}\0".encode()
+        messg = f"{message}\0".encode()
+
+        try:
+            sock.sendall(cop)
+            sock.sendall(env)
+            sock.sendall(recv)
+            sock.sendall(messg)
+
+        except Exception as e:
+            print("Error al enviar datos en el socket: ", e)
+
+        try:
+            res = int(client.recvMessage(sock), 10)
+        except Exception as e:
+            print("Error al leer respuesta del socket: ", e)
+
+        # Dependiendo de la respuesta dada, el valor de retorno será distinto
+        #CASO 0: EXITO
+        if res == 0: 
+            try:
+                mess_id = int(client.recvFullMessage(sock), 10)
+            except Exception as e:
+                window['_SERVER_'].print("s> SEND FAIL")
+                sock.close()
+                return client.RC.ERROR
+            
+            window['_SERVER_'].print("s> SEND OK - MESSAGE " + str(mess_id))
+            sock.close()
+            return client.RC.OK
+        elif res == 1:
+            window['_SERVER_'].print("s> SEND FAIL / USER DOES NOT EXIST")
+            sock.close()
+            return client.RC.USER_ERROR
+        else:
+            window['_SERVER_'].print("s> SEND FAIL")
+            sock.close()
+            return client.RC.ERROR
 
     # *
     # * @param user    - Receiver user name
