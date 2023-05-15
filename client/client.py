@@ -332,6 +332,7 @@ class client :
         try:
             res = int(client.recvMessage(sock), 10)
         except Exception as e:
+            res = 2
             print("Error al leer respuesta del socket: ", e)
 
         # Dependiendo de la respuesta dada, el valor de retorno será distinto
