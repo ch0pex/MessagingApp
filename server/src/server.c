@@ -15,11 +15,9 @@ pthread_cond_t cond_sc;
 int sd_copy = 0;
 void sigint_handler()
 {
-	printf("Entro aqui\n"); 
 	close(sd_copy); 
 	exit(SUCCESS); 
 } 
-
 
 /**********************************************************
  * Function: Inicializacion del servidor
@@ -158,7 +156,7 @@ void server_treat_request(void *sc)
 	else if(strcmp(DISCONNECT, request.op) == SUCCESS)
 		err = server_request_disconnect(client_info_copy.sc, &request, &response);
 	else if(strcmp(SEND_MESSAGE, request.op) == SUCCESS)
-		err = server_request_send_message(client_info_copy.sc, &request, &response);
+		err = server_request_process_message(client_info_copy.sc, &request, &response);
 	else if(strcmp(CONNECTED_USERS, request.op) == SUCCESS)	
 		err = server_request_connected_users(client_info_copy.sc, &request, &response);
 	

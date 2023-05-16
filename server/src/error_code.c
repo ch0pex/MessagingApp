@@ -23,6 +23,8 @@ t_error_code error_code_print_msg(t_error_code err)
 	case EXT_NO_ARG: 		printf(EXT_NO_ARG_MSG);   break; 
 	case EXT_TO_MANY_ARG: 	printf(EXT_TO_MANY_ARG_MSG);  break; 
 	case EXT_BAD_PORT: 		printf(EXT_BAD_PORT_MSG); break;
+	case HOSTNAME_ERROR: 	printf(HOST_ERROR_MSG); break;
+	case CONNECT_ERROR: 	printf(CONNECT_ERROR_MSG); break;
 	}
 	return (err); 
 }

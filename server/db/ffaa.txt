@@ -1,0 +1,8 @@
+Nombre completo: faa
+Alias: ffaa
+Fecha de nacimiento: 15-05-2023
+Estado: CONNECTED
+IP: 127.0.0.1
+Puerto: 59499
+Ultimo mensaje: 0
+Mensajes:

@@ -1,7 +1,45 @@
-Nombre completo: Textff
+Nombre completo: aaa
 Alias: aaa
-Fecha de nacimiento: 18-05-2023
-Estado: CONNECTED
-IP: 127.0.0.1
-Puerto: 36639
-Mensajes: es: 
+Fecha de nacimiento: 12-05-2023
+Estado: DISCONNECTED
+IP: Null
+Puerto: Null
+Ultimo mensaje: 37
+Mensajes:
+1 fff - alo presidentes2 
+2 ffaa - Textddddd
+3 ddddddddd - ddddddddddddddd
+4 dfdsafsdf - Textdddd
+5 Textcccccccccccccc - Textaaa
+6 Textcccccccccccccc - Textaaa
+7 Textcccccccccccccc - Textaaa
+8 Textcccccccccccccc - Textaaa
+9 Textcccccccccccccc - Textaaa
+10 Textcccccccccccccc - Textaaa
+11 Textcccccccccccccc - Textaaa
+12 Textcccccccccccccc - Textaaa
+13 Textcccccccccccccc - Textaaa
+14 Textcccccccccccccc - Textaaa
+15 Textcccccccccccccc - Textaaa
+16 Textcccccccccccccc - Textaaa
+17 Textcccccccccccccc - Textaaa
+18 Textcccccccccccccc - Textaaa
+19 Textddd - Textdddd
+20 Textddd - Textdddd
+21 Textddd - Textdddd
+22 Textddd - Textdddd
+23 Textf - Textddd
+24 Textf - Textddd
+25 dfff - Textdddaaaa
+26 dfff - Textdddaaaa
+27 dfff - Textdddaaaa
+28 dfff - Textdddaaaa
+29 dfff - Textdddaaaa
+30 dfff - Textdddaaaa
+31 dfff - Textdddaaaa
+32 Textasdfasdfsdfasdf - fffffffffffffffffffffff
+33 Textasdfasdfsdfasdf - fffffffffffffffffffffff
+34 Textasdfasdfsdfasdf - fffffffffffffffffffffff
+35 Textasdfasdfsdfasdf - fffffffffffffffffffffff
+36 Textasdfasdfsdfasdf - fffffffffffffffffffffff
+37 Textasdfasdfsdfasdf - fffffffffffffffffffffff

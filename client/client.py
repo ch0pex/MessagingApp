@@ -26,7 +26,7 @@ class client :
     _username = None
     _alias = None
     _date = None
-
+    _listenSocket = None
     # ******************** METHODS *******************
     # Funcion que decodifica la salida del socket
     @staticmethod
@@ -35,19 +35,10 @@ class client :
         while True:
             msg = sock.recv(1)
             if (msg == b'\0'):
-                break;
+                break
             a += msg.decode()
         return(a)
     
-    @staticmethod
-    def recvFullMessage(sock):
-        a = ''
-        while True:
-            msg = sock.recv(1024)
-            if (msg == b'\0'):
-                break;
-            a += msg.decode()
-        return(a)
     # Limpia los campos de registro en caso de que alguno no sea válido
     @staticmethod
     def clearRegisterData():
@@ -57,16 +48,21 @@ class client :
 
 
     @staticmethod
-    def messageListen(sock): 
-        sock.listen(5)
+    def messageListen(window): 
+        client._listenSocket.listen(5)
         while True:
-            conn, addr = sock.accept()
-            data = conn.recv(1024)
-            if data:
-                print(data.decode())
-            else:
-                break
-
+            try: 
+                connection, address = client._listenSocket.accept()
+                op = client.recvMessage(connection)
+                if op != "SEND_MESSAGE":
+                    continue
+                alias = client.recvMessage(connection)
+                msgId = client.recvMessage(connection)
+                message = client.recvMessage(connection)
+                window['_SERVER_'].print(f"s> MESSAGE {alias} {msgId} {message}\nEND")
+            except:
+                print("Error al recibir mensaje")  
+                break         
 
 
     # *
@@ -195,13 +191,10 @@ class client :
     # * @return ERROR if another error occurred
     @staticmethod
     def  connect(user, window):
-        # Creamos el socket para escuchar los mensajes mientras estamos connectados 
-        listenSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Creamos el socket
+        client._listenSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         listenSocket_address = ("localhost", 0) 
-        listenSocket.bind(listenSocket_address) # Con el puerto 0, se asigna un puerto libre aleatorio
-        thread = threading.Thread(target=client.messageListen, args=(listenSocket,))
-        thread.start()
-
+        client._listenSocket.bind(listenSocket_address) # Con el puerto 0, se asigna un puerto libre aleatorio
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_address = (client._server, client._port)
         try:
@@ -212,7 +205,7 @@ class client :
         # Se enviarán el código de operación y el alias
         cop = b'CONNECT\0'
         usa = f"{user}\0".encode()
-        port = f"{listenSocket.getsockname()[1]}\0".encode() 
+        port = f"{client._listenSocket.getsockname()[1]}\0".encode() 
 
         try:
             sock.sendall(cop)
@@ -227,7 +220,9 @@ class client :
             res = 3
             print("Error al leer datos del socket: ", e)
 
-        if res == 0: 
+        if res == 0: # Si la respuesta es 0, se ha conectado correctamente y se crea el hilo de escucha
+            thread = threading.Thread(target=client.messageListen, args=(window,))
+            thread.start()
             window['_SERVER_'].print("s> CONNECT OK")
             sock.close()
             return client.RC.OK
@@ -281,6 +276,8 @@ class client :
         #CASO 0: EXITO
         if res == 0: 
             window['_SERVER_'].print("s> DISCONNECT OK")
+            client._listenSocket.close() # Se cierra el socket de escucha
+            client._listenSocket = None 
             sock.close()
             return client.RC.OK
         elif res == 1:
@@ -316,14 +313,14 @@ class client :
 
         # Se enviarán el código de operación y el alias
         cop = b'SEND\0'
-        env = f"{client._alias}\0".encode()
-        recv = f"{user}\0".encode()
+        msg_from = f"{client._alias}\0".encode()
+        msg_to = f"{user}\0".encode()
         messg = f"{message}\0".encode()
 
         try:
             sock.sendall(cop)
-            sock.sendall(env)
-            sock.sendall(recv)
+            sock.sendall(msg_from)
+            sock.sendall(msg_to)
             sock.sendall(messg)
 
         except Exception as e:
@@ -339,12 +336,12 @@ class client :
         #CASO 0: EXITO
         if res == 0: 
             try:
-                mess_id = int(client.recvFullMessage(sock), 10)
+                mess_id = int(client.recvMessage(sock), 10)
             except Exception as e:
+                print("Error al leer respuesta del socket: ", e)
                 window['_SERVER_'].print("s> SEND FAIL")
                 sock.close()
                 return client.RC.ERROR
-            
             window['_SERVER_'].print("s> SEND OK - MESSAGE " + str(mess_id))
             sock.close()
             return client.RC.OK
@@ -353,6 +350,7 @@ class client :
             sock.close()
             return client.RC.USER_ERROR
         else:
+            print("aaui")
             window['_SERVER_'].print("s> SEND FAIL")
             sock.close()
             return client.RC.ERROR

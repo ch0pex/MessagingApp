@@ -1,6 +1,6 @@
-Nombre completo: Textfff
-Alias: Textf
-Fecha de nacimiento: 18-05-2023
+Nombre completo: ddd
+Alias: ddddddddd
+Fecha de nacimiento: 16-05-2023
 Estado: DISCONNECTED
 IP: Null
 Puerto: Null

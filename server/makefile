@@ -39,6 +39,6 @@ clean:
 
 fclean: clean 
 	rm -f $(NAME)
-	rm -r db
+
 
 re: fclean all

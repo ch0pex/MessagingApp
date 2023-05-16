@@ -15,6 +15,8 @@
 #define EXT_BAD_PORT_MSG  "Error, puerto no valido (1024-65535)\n"
 #define SEND_ERROR_MSG "Error al recibir el mensaje...\n"
 #define RECEIVE_ERROR_MSG "Error al recibir el mensaje...\n"
+#define HOST_ERROR_MSG "Error en gethostbyname\n"
+#define CONNECT_ERROR_MSG "Error al conectar con el servidor...\n"
 
 //Errores del servidor
 typedef enum  {
@@ -26,6 +28,8 @@ typedef enum  {
 	ACCEPT_ERROR,
 	SEND_ERROR,
 	RECEIVE_ERROR,
+	HOSTNAME_ERROR,
+	CONNECT_ERROR,
 	EXT_TO_MANY_ARG,
 	EXT_NO_ARG,
 	EXT_BAD_PORT

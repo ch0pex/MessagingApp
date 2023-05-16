@@ -1,0 +1,8 @@
+Nombre completo: asdfasdfasdf
+Alias: dfdsafsdf
+Fecha de nacimiento: 12-05-2023
+Estado: DISCONNECTED
+IP: Null
+Puerto: Null
+Ultimo mensaje: 0
+Mensajes:
