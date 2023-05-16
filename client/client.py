@@ -4,7 +4,10 @@ import PySimpleGUI as sg
 from enum import Enum
 import argparse
 import socket
-import threading
+
+
+import zeep
+
 
 
 class client :
@@ -27,6 +30,8 @@ class client :
     _alias = None
     _date = None
     _listenSocket = None
+    _listenThread = None
+    _wsdl_url = "http://localhost:8000/?wsdl"
     # ******************** METHODS *******************
     # Funcion que decodifica la salida del socket
     @staticmethod
@@ -47,21 +52,26 @@ class client :
         client._date= None
 
 
+    # Funcion que se ejecuta en un hilo para escuchar los mensajes cuando estemos conectados
     @staticmethod
     def messageListen(window): 
         client._listenSocket.listen(5)
+        print("Escuchando mensajes")
         while True:
             try: 
                 connection, address = client._listenSocket.accept()
-                op = client.recvMessage(connection)
-                if op != "SEND_MESSAGE":
-                    continue
-                alias = client.recvMessage(connection)
-                msgId = client.recvMessage(connection)
-                message = client.recvMessage(connection)
-                window['_SERVER_'].print(f"s> MESSAGE {alias} {msgId} {message}\nEND")
             except:
-                break         
+                print("Se cierra el socket de escucha")
+                break   
+
+            op = client.recvMessage(connection)
+            if op != "SEND_MESSAGE":
+                continue
+            alias = client.recvMessage(connection)
+            msgId = client.recvMessage(connection)
+            message = client.recvMessage(connection)
+            window['_SERVER_'].print(f"s> MESSAGE {alias} {msgId} {message}\nEND")
+      
 
 
     # *
@@ -220,8 +230,8 @@ class client :
             print("Error al leer datos del socket: ", e)
 
         if res == 0: # Si la respuesta es 0, se ha conectado correctamente y se crea el hilo de escucha
-            thread = threading.Thread(target=client.messageListen, args=(window,))
-            thread.start()
+            client._listenThread = threading.Thread(target=client.messageListen, args=(window,))
+            client._listenThread.start()
             window['_SERVER_'].print("s> CONNECT OK")
             sock.close()
             return client.RC.OK
@@ -276,7 +286,7 @@ class client :
         if res == 0: 
             window['_SERVER_'].print("s> DISCONNECT OK")
             client._listenSocket.shutdown(socket.SHUT_RDWR) # Se cierra el socket de escucha
-            client._listenSocket.close() # Se cierra el socket de escucha
+            client._listenThread.join() # Se espera a que el hilo de escucha termine
             sock.close()
             return client.RC.OK
         elif res == 1:
@@ -302,6 +312,7 @@ class client :
     @staticmethod
     def  send(user, message, window):
    # Creamos el socket
+        WebService = zeep.Client(wsdl=client._wsdl_url)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_address = (client._server, client._port) 
         # --INICIO CONEXION--
@@ -314,7 +325,7 @@ class client :
         cop = b'SEND\0'
         msg_from = f"{client._alias}\0".encode()
         msg_to = f"{user}\0".encode()
-        messg = f"{message}\0".encode()
+        messg = f"{WebService.service.delete_spaces(message)}\0".encode() # Se eliminan los espacios del mensaje con el WebService
 
         try:
             sock.sendall(cop)

@@ -15,7 +15,7 @@ t_error_code parser_arg_check(int argc, char **argv)
 
 	err = parser_check_arg_count(argc); 
 	if(err == SUCCESS) 
-		err = parser_check_port(argv[1]); 
+		err = parser_check_port(argv[2]); 
 	return (err); 
 }
 
@@ -25,9 +25,9 @@ t_error_code parser_arg_check(int argc, char **argv)
  *********************************************************/
 t_error_code parser_check_arg_count(int argc)
 {
-	if (argc < 2)
+	if (argc < 3)
 		return (EXT_NO_ARG); 
-	if (argc > 2) 
+	if (argc > 3) 
 		return (EXT_TO_MANY_ARG); 
 	return (SUCCESS); 
 }
@@ -39,7 +39,7 @@ t_error_code parser_check_arg_count(int argc)
 t_error_code parser_check_port(char *argv)
 {
 	int port; 
-
+	printf("%s\n", argv);
 	if(sscanf(argv, "%d", &port) == 0)
 		return (EXT_BAD_PORT); 
 

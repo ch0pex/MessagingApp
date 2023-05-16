@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
 	if (err == SUCCESS)
 	{
-		err = server_init(&server, argv[1]); //Inicializacion del servidor
+		err = server_init(&server, argv[2]); //Inicializacion del servidor
 		if (err == SUCCESS)
 		{
 			server_loop(&server); // Bucle del servidor

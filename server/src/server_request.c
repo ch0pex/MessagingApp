@@ -192,7 +192,7 @@ t_error_code server_request_process_message(int sc_copy, t_request *request, t_r
 		sprintf(nl_response, "%d", response->status);
 		if (SEND_ERROR == sendMessage(sc_copy, (char *) &nl_response, strlen(nl_response) + 1)) 
 			return(SEND_ERROR); 
-		requeste->user->alias = request->send_to; // Se cambia el alias del usuario para que se desconecte 
+		strcpy(request->user->alias, request->send_to); // Se cambia el alias del usuario para que se desconecte 
 		return (server_request_disconnect(sc_copy, request, response)); // 
 	}
 
