@@ -1,8 +1,0 @@
-Nombre completo: Textaa
-Alias: pacoaa
-Fecha de nacimiento: 18-05-2023
-Estado: CONNECTED
-IP: 127.0.0.1
-Puerto: 50519
-Ultimo mensaje: 9
-Mensajes:

@@ -1,8 +1,0 @@
-Nombre completo: Tasdfdsaft
-Alias: Textasdfasdfsdfasdf
-Fecha de nacimiento: 26-05-2023
-Estado: CONNECTED
-IP: 127.0.0.1
-Puerto: 40001
-Ultimo mensaje: 0
-Mensajes:

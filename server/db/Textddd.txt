@@ -1,8 +1,0 @@
-Nombre completo: Textd
-Alias: Textddd
-Fecha de nacimiento: 26-05-2023
-Estado: CONNECTED
-IP: 127.0.0.1
-Puerto: 54563
-Ultimo mensaje: 0
-Mensajes:

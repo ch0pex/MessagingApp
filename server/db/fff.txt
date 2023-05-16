@@ -1,8 +1,0 @@
-Nombre completo: fff
-Alias: fff
-Fecha de nacimiento: 23-05-2023
-Estado: DISCONNECTED
-IP: Null
-Puerto: Null
-Ultimo mensaje: 0
-Mensajes:

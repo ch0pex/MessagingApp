@@ -1,8 +1,0 @@
-Nombre completo: Textc
-Alias: Textcccccccccccccc
-Fecha de nacimiento: 10-05-2023
-Estado: CONNECTED
-IP: 127.0.0.1
-Puerto: 36489
-Ultimo mensaje: 0
-Mensajes:

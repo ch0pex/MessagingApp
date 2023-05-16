@@ -27,7 +27,7 @@ t_error_code parser_check_arg_count(int argc)
 {
 	if (argc < 2)
 		return (EXT_NO_ARG); 
-	if (argc > 2)
+	if (argc > 2) 
 		return (EXT_TO_MANY_ARG); 
 	return (SUCCESS); 
 }
@@ -43,8 +43,7 @@ t_error_code parser_check_port(char *argv)
 	if(sscanf(argv, "%d", &port) == 0)
 		return (EXT_BAD_PORT); 
 
-
-	if(port < 1024 || port > 65535)
+	if(port < 1024 || port > 65535) 
 		return(EXT_BAD_PORT); 
 
 	return(SUCCESS); 

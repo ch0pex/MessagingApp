@@ -2,6 +2,10 @@
 #include <errno.h>
 #include "lines.h"
 
+
+/* ************************************************************************* *
+*  Funcion: Esta funcion envia un mensaje a traves de un socket.              *
+*************************************************************************** */
 t_error_code sendMessage(int socket, char * buffer, int len)
 {
 	int r;
@@ -20,6 +24,9 @@ t_error_code sendMessage(int socket, char * buffer, int len)
 		return(SUCCESS);	/* full length has been sent */
 }
 
+/* ************************************************************************* *
+*  Funcion: Esta funcion recibe un mensaje a traves de un socket.             *
+*************************************************************************** */
 t_error_code recvMessage(int socket, char *buffer, int len)
 {
 	int r;
@@ -37,6 +44,9 @@ t_error_code recvMessage(int socket, char *buffer, int len)
 		return(SUCCESS);	/* full length has been receive */
 }
 
+/* ************************************************************************* *
+*  Funcion: Esta funcion recibe un mensaje a traves de un socket.             *
+*************************************************************************** */
 ssize_t readLine(int fd, void *buffer, size_t n)
 {
 	ssize_t numRead;  /* num of bytes fetched by last read() */

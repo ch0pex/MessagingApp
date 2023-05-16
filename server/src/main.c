@@ -23,8 +23,5 @@ int main(int argc, char **argv)
 			server_loop(&server); // Bucle del servidor
 		}
 	}
-	
 	return (error_code_print_msg(err)); 
 }
-
-

@@ -61,7 +61,6 @@ class client :
                 message = client.recvMessage(connection)
                 window['_SERVER_'].print(f"s> MESSAGE {alias} {msgId} {message}\nEND")
             except:
-                print("Error al recibir mensaje")  
                 break         
 
 
@@ -276,8 +275,8 @@ class client :
         #CASO 0: EXITO
         if res == 0: 
             window['_SERVER_'].print("s> DISCONNECT OK")
+            client._listenSocket.shutdown(socket.SHUT_RDWR) # Se cierra el socket de escucha
             client._listenSocket.close() # Se cierra el socket de escucha
-            client._listenSocket = None 
             sock.close()
             return client.RC.OK
         elif res == 1:
